@@ -23,8 +23,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
-        Log.d("xyi", fingerprints[0]);
         VKSdk.login(MainActivity.this, scope);
 
     }
@@ -38,7 +36,9 @@ public class MainActivity extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), "Good", Toast.LENGTH_LONG).show();
                // startActivity(new Intent(MainActivity.this, AllAct.class));
                 //finish();
+                startActivity(new Intent(MainActivity.this, GetAll.class));
             }
+
             @Override
             public void onError(VKError error) {
                 // Произошла ошибка авторизации (например, пользователь запретил авторизацию)

@@ -25,9 +25,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
         Log.d("xyi", fingerprints[0]);
+        if(VKSdk.isLoggedIn())
+        {
+            startActivity(new Intent(MainActivity.this, GetAll.class));
+        }
         VKSdk.login(MainActivity.this, scope);
 
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -53,6 +58,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        super.onPause();
+        super.onPause();finish();
     }
 }

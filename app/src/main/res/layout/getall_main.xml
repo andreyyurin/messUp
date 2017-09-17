@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:custom="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp">
-        <SeekBar
+        <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
             android:id="@+id/seekbar"
             android:max="10"
             android:progress="0"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:dsb_min="2"
+            app:dsb_max="15"
             />
     </LinearLayout>
     <LinearLayout
@@ -28,13 +33,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp">
-        <Button
+        <com.dd.processbutton.iml.ActionProcessButton
             android:id="@+id/btnGo"
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="GO"
             android:textSize="20dp"
-            android:gravity="center"/>
+            android:gravity="center"
+            custom:pb_colorComplete="@color/green_complete"
+            custom:pb_colorNormal="@color/blue_normal"
+            custom:pb_colorPressed="@color/blue_pressed"
+            custom:pb_colorProgress="@color/purple_progress"
+            custom:pb_textComplete="Success"
+            custom:pb_textProgress="Loading"
+            custom:pb_textError="Error"
+            custom:pb_colorError="@color/red_error" />
     </LinearLayout>
 </LinearLayout>

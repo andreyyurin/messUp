@@ -1,32 +1,25 @@
 package ltc.messup;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
-import com.vk.sdk.api.methods.VKApiGroups;
-import com.vk.sdk.api.model.VKApiDialog;
-import com.vk.sdk.api.model.VKApiGetDialogResponse;
-import com.vk.sdk.api.model.VKList;
 
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by admin on 16.08.2017.
@@ -34,8 +27,8 @@ import java.util.concurrent.TimeUnit;
 
 public class GetAll extends AppCompatActivity {
 
-    private Button btnGo;
-    private SeekBar seekBar;
+    private ActionProcessButton btnGo;
+    private DiscreteSeekBar seekBar;
     private int value;
     private TextView textSeek;
     @Override
@@ -43,24 +36,26 @@ public class GetAll extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.getall_main);
 
-        seekBar = (SeekBar) findViewById(R.id.seekbar);
-        btnGo = (Button) findViewById(R.id.btnGo);
+        seekBar = (DiscreteSeekBar) findViewById(R.id.seekbar);
+        btnGo = (ActionProcessButton) findViewById(R.id.btnGo);
+        btnGo.setMode(ActionProcessButton.Mode.ENDLESS);
+
         value = seekBar.getProgress();
         textSeek = (TextView) findViewById(R.id.textSeek);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        seekBar.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            public void onProgressChanged(DiscreteSeekBar seekBar, int progress, boolean fromUser) {
                 value = progress;
                 textSeek.setText(String.valueOf(value));
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void onStartTrackingTouch(DiscreteSeekBar seekBar) {
 
             }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+            public void onStopTrackingTouch(DiscreteSeekBar seekBar) {
 
             }
         });
@@ -68,6 +63,7 @@ public class GetAll extends AppCompatActivity {
         btnGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnGo.setProgress(1);
                 VKRequest request = VKApi.groups().search(VKParameters.from(VKApiConst.Q, "бот", VKApiConst.COUNT, value));
                 request.executeWithListener(new VKRequest.VKRequestListener() {
                     @Override
@@ -91,6 +87,7 @@ public class GetAll extends AppCompatActivity {
                                     public void onComplete(VKResponse response) {
                                         super.onComplete(response);
                                         Log.d("ANSWER", "УСПЕХ");
+                                        btnGo.setProgress(0);
                                     }
                                 });
                                 try {

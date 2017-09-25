@@ -37,22 +37,23 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_below="@+id/layout_text">
+
         <com.dd.processbutton.iml.ActionProcessButton
             android:id="@+id/btnGo"
-            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Накрутить"
-            android:textSize="20dp"
+            android:layout_weight="1"
             android:gravity="center"
+            android:text="Накрутить"
+            android:textSize="15dp"
 
             custom:pb_colorComplete="@color/green_complete"
+            custom:pb_colorError="@color/red_error"
             custom:pb_colorNormal="@color/toolbar_color"
             custom:pb_colorPressed="@color/blue_pressed"
             custom:pb_colorProgress="@color/purple_progress"
             custom:pb_textComplete="Success"
-            custom:pb_textProgress="Loading"
             custom:pb_textError="Error"
-            custom:pb_colorError="@color/red_error" />
+            custom:pb_textProgress="Loading" />
     </LinearLayout>
 </RelativeLayout>

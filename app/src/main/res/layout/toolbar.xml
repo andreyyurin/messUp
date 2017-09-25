@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    android:layout_height="?android:actionBarSize"
+    android:background="@color/toolbar_color">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:padding="5dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/profile_image"
+        android:layout_width="?android:actionBarSize"
+        android:layout_height="?android:actionBarSize"
+        android:src="@drawable/example"
+        app:civ_border_width="0dp"
+        app:civ_border_color="#FF000000"
+        />
+
+    <TextView
+        android:textColor="@color/vk_black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        android:paddingLeft="5dp"
+        android:id="@+id/textName"
+        android:layout_marginLeft="10dp"/>
+
+</android.support.v7.widget.Toolbar>

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "254540548324",
+    "firebase_url": "https://messup-d4714.firebaseio.com",
+    "project_id": "messup-d4714",
+    "storage_bucket": "messup-d4714.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:254540548324:android:02f995112133101b",
+        "android_client_info": {
+          "package_name": "ltc.messup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "254540548324-og79eagp4nk9noff3p46vbu01jpb44h3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ltc.messup",
+            "certificate_hash": "9847b0f66b811b60dc7aa8a989dcb70040586431"
+          }
+        },
+        {
+          "client_id": "254540548324-q0t616re10o4vfu8j9kr5vove09m8dm5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZ-SgCStYapQXPQejMMUFULoJ_zzh3SI8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "254540548324-q0t616re10o4vfu8j9kr5vove09m8dm5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

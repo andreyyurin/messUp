@@ -11,6 +11,12 @@ import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -37,6 +43,8 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -56,7 +64,9 @@ public class GetAll extends AppCompatActivity implements RewardedVideoAdListener
     private AdView mAdView;
     private static final String APP_ID = "ca-app-pub-8154277548860310~8692901258";
     private RewardedVideoAd mAd;
-    private TextView textName;
+    private TextView textName, textCoins;
+    private Integer messes;
+    private String link = "https://andreyyurin55.000webhostapp.com/";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,6 +83,7 @@ public class GetAll extends AppCompatActivity implements RewardedVideoAdListener
         fab = (FloatingActionButton) findViewById(R.id.fab);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         textSeek = (TextView) findViewById(R.id.textSeek);
+        textCoins = (TextView) findViewById(R.id.textCoins);
 
         fab.setBackgroundColor(getResources().getColor(R.color.toolbar_color));
 
@@ -85,13 +96,66 @@ public class GetAll extends AppCompatActivity implements RewardedVideoAdListener
 
         textSeek.setText(String.valueOf(value));
 
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest postRequest = new StringRequest(Request.Method.POST, link,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        //coins = Integer.parseInt(response);
+                       // textCoins.setText(response);
+                        try {
+                            JSONObject object = new JSONObject(response);
+                            textCoins.setText(object.getString("coins"));
+                            messes = object.getInt("mess");
+                            if(object.getInt("coins")>3){
+                                seekBar.setMax(15);
+                                btnGo.setEnabled(true);
+                            }else{
+                                if(object.getInt("coins")<=1){
+                                    seekBar.setMax(1);
+                                    seekBar.setMin(1);
+                                    btnGo.setEnabled(false);
+                                }else {
+                                    seekBar.setMax((int) Math.floor(object.getDouble("coins") * 5));
+                                    btnGo.setEnabled(true);
+                                }
+                            }
+                            Log.d("xyi", String.valueOf(messes));
+                        }catch (JSONException error){
 
-        VKRequest request = VKApi.users().get(VKParameters.from(VKApiConst.FIELDS, "photo_max_orig"));
+                        }
+
+                        Log.d("Response", response);
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                       // Log.d("Error.Response", response);
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("id", String.valueOf(getMyId()));
+
+                return params;
+            }
+        };
+        queue.add(postRequest);
+
+        VKRequest request = VKApi.users().get(VKParameters.from(VKApiConst.FIELDS, "photo_big"));
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
                 VKApiUser user = ((VKList<VKApiUser>) response.parsedModel).get(0);
-                String urlImage = user.photo_max_orig;
+                String urlImage = user.photo_big;
                 Log.d("xyi", urlImage);
                 Picasso
                         .with(getApplicationContext())
@@ -159,7 +223,62 @@ public class GetAll extends AppCompatActivity implements RewardedVideoAdListener
             @Override
             public void onClick(View v) {
                 btnGo.setProgress(1);
-                VKRequest request = VKApi.groups().search(VKParameters.from(VKApiConst.Q, "бот", VKApiConst.COUNT, value));
+
+                RequestQueue queue = Volley.newRequestQueue(btnGo.getContext());
+                StringRequest postRequest = new StringRequest(Request.Method.POST, link,
+                        new Response.Listener<String>()
+                        {
+                            @Override
+                            public void onResponse(String response) {
+                                // response
+                                //coins = Integer.parseInt(response);
+                                // textCoins.setText(response);
+                                try {
+                                    JSONObject object = new JSONObject(response);
+                                    textCoins.setText(object.getString("coins"));
+                                    messes = object.getInt("mess");
+                                    if(object.getInt("coins")>3){
+                                        seekBar.setMax(15);
+                                    }else{
+                                        if(object.getInt("coins")<=1){
+                                            seekBar.setMax(1);
+                                            seekBar.setMin(1);
+                                            btnGo.setEnabled(false);
+                                        }else {
+                                            seekBar.setMax((int) Math.floor(object.getDouble("coins") * 5));
+                                            btnGo.setEnabled(true);
+                                        }
+                                    }
+                                    Log.d("xyi", String.valueOf(messes));
+                                }catch (JSONException error){
+
+                                }
+
+                                Log.d("Response", response);
+                            }
+                        },
+                        new Response.ErrorListener()
+                        {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                // error
+                                // Log.d("Error.Response", response);
+                            }
+                        }
+                ) {
+                    @Override
+                    protected Map<String, String> getParams()
+                    {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("id", String.valueOf(getMyId()));
+                        params.put("count", String.valueOf(value));
+
+                        return params;
+                    }
+                };
+                queue.add(postRequest);
+
+                VKRequest request = VKApi.groups().search(VKParameters.from(VKApiConst.Q, "бот", VKApiConst.COUNT, value, VKApiConst.OFFSET, messes));
                 request.executeWithListener(new VKRequest.VKRequestListener() {
                     @Override
                     public void onComplete(VKResponse response) {
@@ -235,7 +354,60 @@ public class GetAll extends AppCompatActivity implements RewardedVideoAdListener
 
     @Override
     public void onRewarded(RewardItem rewardItem) {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest postRequest = new StringRequest(Request.Method.POST, link,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        //coins = Integer.parseInt(response);
+                        // textCoins.setText(response);
+                        try {
+                            JSONObject object = new JSONObject(response);
+                            textCoins.setText(object.getString("coins"));
+                            messes = object.getInt("mess");
+                            if(object.getInt("coins")>3){
+                                seekBar.setMax(15);
+                                btnGo.setEnabled(true);
+                            }else{
+                                if(object.getInt("coins")<=1){
+                                    seekBar.setMax(1);
+                                    seekBar.setMin(1);
+                                    btnGo.setEnabled(false);
+                                }else {
+                                    seekBar.setMax((int) Math.floor(object.getDouble("coins") * 5));
+                                    btnGo.setEnabled(true);
+                                }
+                            }
+                            Log.d("xyi", String.valueOf(messes));
+                        }catch (JSONException error){
 
+                        }
+
+                        Log.d("Response", response);
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        // Log.d("Error.Response", response);
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("id", String.valueOf(getMyId()));
+                params.put("reward", "true");
+
+                return params;
+            }
+        };
+        queue.add(postRequest);
     }
 
     @Override

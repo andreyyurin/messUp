@@ -12,6 +12,7 @@
         <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
             android:id="@+id/seekbar"
             android:max="15"
+
             android:progress="1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

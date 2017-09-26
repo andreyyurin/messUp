@@ -29,7 +29,7 @@
                 android:textColor="@color/vk_black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="15dp"
+                android:textSize="20dp"
                 android:layout_gravity="center"
                 android:id="@+id/textName"
                 android:layout_marginLeft="10dp"/>
@@ -50,6 +50,7 @@
                     android:scaleType="centerInside"
                     android:src="@drawable/coins" />
                 <TextView
+                    android:id="@+id/textCoins"
                     android:textColor="@color/vk_black"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

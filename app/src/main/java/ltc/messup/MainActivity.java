@@ -28,8 +28,10 @@ public class MainActivity extends AppCompatActivity {
         if(VKSdk.isLoggedIn())
         {
             startActivity(new Intent(MainActivity.this, GetAll.class));
+            finish();
+        }else {
+            VKSdk.login(MainActivity.this, scope);
         }
-        VKSdk.login(MainActivity.this, scope);
 
     }
 
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
                // startActivity(new Intent(MainActivity.this, AllAct.class));
                 //finish();
                 startActivity(new Intent(MainActivity.this, GetAll.class));
+                finish();
             }
 
             @Override
@@ -58,6 +61,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        super.onPause();finish();
+        super.onPause();
     }
 }

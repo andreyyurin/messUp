@@ -1,17 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MessUp</string>
-    <string name="banner_ad_unit_id" >ca-app-pub-8154277548860310/5468149724</string>
-    <integer name="com_vk_sdk_AppId">6150795</integer>
     <string name="btn_text">Wind</string>
     <string name="instr1_page1">Tuning</string>
-    <string name="instr2_page1">Choose the right amount</string>
-    <string name="instr3_page1">Press the button</string>
     <string name="instr1_page2">1 Coin = 1 Advertising display</string>
+    <string name="instr2_page1">Choose the right amount</string>
     <string name="instr2_page2">Go to the menu</string>
+    <string name="instr3_page1">Press the button</string>
     <string name="instr3_page2">Press the button</string>
+    <string name="banner_ad_unit_id">ca-app-pub-8154277548860310/5468149724</string>
     <string name="about">About the application</string>
     <string name="info">Screwing messages on VK</string>
-    <string name="version">Version: </string>
+    <string name="version">Version:</string>
     <string name="url_inst">https://www.instagram.com/lazyteenscorp/</string>
     <string name="url_vk">https://vk.com/ltc_omsk</string>
     <string name="contacts">Our contacts</string>

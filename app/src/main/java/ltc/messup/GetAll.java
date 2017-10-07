@@ -1,22 +1,43 @@
 package ltc.messup;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.graphics.LightingColorFilter;
+import android.graphics.PorterDuff;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.SharedPreferencesCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.dd.CircularProgressButton;
+import com.dd.morphingbutton.MorphingButton;
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -24,8 +45,12 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
+import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
+import com.nightonke.boommenu.BoomButtons.SimpleCircleButton;
+import com.nightonke.boommenu.BoomMenuButton;
 import com.squareup.picasso.Picasso;
 import com.vk.sdk.VKAccessToken;
+import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
@@ -44,9 +69,15 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import dmax.dialog.SpotsDialog;
+import ltc.messup.fragments.FirstPage;
+import ltc.messup.fragments.SecondPage;
+import me.relex.circleindicator.CircleIndicator;
 
 /**
  * Created by admin on 16.08.2017.
@@ -54,47 +85,211 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class GetAll extends AppCompatActivity implements RewardedVideoAdListener {
 
-    private ActionProcessButton btnGo;
+    //private ActionProcessButton btnGo;
+    private CircularProgressButton btnGo;
     private DiscreteSeekBar seekBar;
     private int value;
     private Toolbar toolbar;
     private CircleImageView profileImg;
-    private FloatingActionButton fab;
-    private TextView textSeek;
+    private TextView textSeek;// txtVersion;
     private AdView mAdView;
     private static final String APP_ID = "ca-app-pub-8154277548860310~8692901258";
     private RewardedVideoAd mAd;
     private TextView textName, textCoins;
     private Integer messes;
     private String link = "https://andreyyurin55.000webhostapp.com/";
+    private AlertDialog dialog;
+    public static VKResponse responseTemp;
+    private BoomMenuButton bmb;
+    private ViewPager viewPager;
+    private Locale mLocale;
+    private SharedPreferences sharedPreferences;
+    private CircleIndicator indicator;
+    private LinearLayout view;
+//    private ImageButton vkBtn, instBtn;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        Context context = getApplicationContext();
+        sharedPreferences = getPreferences(context.MODE_PRIVATE);
+        String locale = sharedPreferences.getString("lang","");
+        if(!locale.equals("ru") && !locale.equals("en")){
+            setLocale("default");
+        }else if(locale.equals("ru")){
+            setLocale("ru");
+        }else {
+            setLocale("en");
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.getall_main);
 
+
         MobileAds.initialize(getApplicationContext(), APP_ID);
 
+        responseTemp = new VKResponse();
         textName = (TextView) findViewById(R.id.textName);
         seekBar = (DiscreteSeekBar) findViewById(R.id.seekbar);
-        btnGo = (ActionProcessButton) findViewById(R.id.btnGo);
-        btnGo.setMode(ActionProcessButton.Mode.ENDLESS);
+        btnGo = (CircularProgressButton) findViewById(R.id.btnGo);
+        //btnGo.setMode(ActionProcessButton.Mode.ENDLESS);
         profileImg = (CircleImageView) findViewById(R.id.profile_image);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         textSeek = (TextView) findViewById(R.id.textSeek);
         textCoins = (TextView) findViewById(R.id.textCoins);
+        viewPager = (ViewPager) findViewById(R.id.pager);
+        indicator = (CircleIndicator) findViewById(R.id.indicator);
 
-        fab.setBackgroundColor(getResources().getColor(R.color.toolbar_color));
+        dialog = new SpotsDialog(this);
+
+        bmb = (BoomMenuButton) findViewById(R.id.bmb);
 
         mAd = MobileAds.getRewardedVideoAdInstance(this);
         //loadRewardedVideoAd();
 
         setSupportActionBar(toolbar);
         seekBar.setProgress(1);
+        btnGo.setProgress(0);
         value = seekBar.getProgress();
 
+        viewPager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
         textSeek.setText(String.valueOf(value));
+        indicator.setViewPager(viewPager);
+        (new MyPagerAdapter(getSupportFragmentManager())).registerDataSetObserver(indicator.getDataSetObserver());
+
+       // btnGo.getBackground().setColorFilter(new LightingColorFilter(0x000000,getResources().getColor(R.color.toolbar_color)));
+        //for (int i = 0; i < bmb.getPiecePlaceEnum().pieceNumber(); i++) {
+       /* for (int i = 0; i < bmb.getPiecePlaceEnum().pieceNumber(); i++) {
+            SimpleCircleButton.Builder builder = new SimpleCircleButton.Builder()
+                    .normalImageRes(R.drawable.ic_done);
+            bmb.addBuilder(builder);
+        }*/
+
+        view = (LinearLayout) getLayoutInflater().inflate(R.layout.alert_view, null);
+        final ImageButton vkBtn = (ImageButton) view.findViewById(R.id.vk_btn);
+        final ImageButton instBtn = (ImageButton) view.findViewById(R.id.inst_btn);
+        final TextView txtVersion = (TextView) view.findViewById(R.id.version_txt);
+
+        try {
+            txtVersion.setText(txtVersion.getText()+getPackageManager().getPackageInfo(getPackageName(), 0).versionName.toString());
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        vkBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.url_vk)));
+                startActivity(browserIntent);
+            }
+        });
+
+        instBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.url_inst)));
+                startActivity(browserIntent);
+            }
+        });
+
+        SimpleCircleButton.Builder builder = new SimpleCircleButton.Builder()
+                .normalImageRes(R.drawable.icwatch)
+                .rippleEffect(true)
+                .listener(new OnBMClickListener() {
+                    @Override
+                    public void onBoomButtonClick(int index) {
+                        loadRewardedVideoAd();
+                    }
+                })
+                .shadowEffect(true)
+                .normalColor(getResources().getColor(R.color.menu_item1))
+                .pieceColor(getResources().getColor(R.color.menu_item1piece));
+        bmb.addBuilder(builder);
+
+        final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(GetAll.this);
+        alertBuilder.setTitle("")
+                .setCancelable(false)
+                .setView(view)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+        final android.app.AlertDialog alertDialog = alertBuilder.create();
+        SimpleCircleButton.Builder builder1 = new SimpleCircleButton.Builder()
+                .normalImageRes(R.drawable.ic_info)
+                .rippleEffect(true)
+                .listener(new OnBMClickListener() {
+                    @Override
+                    public void onBoomButtonClick(int index) {
+                        alertDialog.show();
+                    }
+                })
+                .shadowEffect(true)
+                .normalColor(getResources().getColor(R.color.menu_item2))
+                .pieceColor(getResources().getColor(R.color.menu_item2piece));
+        bmb.addBuilder(builder1);
+        SimpleCircleButton.Builder builder2 = new SimpleCircleButton.Builder();
+        if (getLocale().equals("ru")) {
+           builder2
+                    .normalImageRes(R.drawable.ru_icon)
+                    .rippleEffect(true)
+                    .listener(new OnBMClickListener() {
+                        @Override
+                        public void onBoomButtonClick(int index) {
+                            if(Objects.equals(getLocale(), "ru")){
+                                setLocale("en");
+                            }else{
+                                setLocale("ru");
+                            }
+                            Intent intent = getIntent();
+                            finish();
+                            startActivity(intent);
+                        }
+                    })
+                    .shadowEffect(true)
+                    .normalColor(getResources().getColor(R.color.menu_item4))
+                    .pieceColor(getResources().getColor(R.color.menu_item4piece));
+        }else{
+            builder2
+                    .normalImageRes(R.drawable.en_icon)
+                    .rippleEffect(true)
+                    .listener(new OnBMClickListener() {
+                        @Override
+                        public void onBoomButtonClick(int index) {
+                            if(Objects.equals(getLocale(), "ru")){
+                                setLocale("en");
+                            }else{
+                                setLocale("ru");
+                            }
+                            Intent intent = getIntent();
+                            finish();
+                            startActivity(intent);
+                        }
+                    })
+                    .shadowEffect(true)
+                    .normalColor(getResources().getColor(R.color.menu_item4))
+                    .pieceColor(getResources().getColor(R.color.menu_item4piece));
+        }
+        bmb.addBuilder(builder2);
+
+        SimpleCircleButton.Builder builder3 = new SimpleCircleButton.Builder()
+                .normalImageRes(R.drawable.ic_exit)
+                .rippleEffect(true)
+                .listener(new OnBMClickListener() {
+                    @Override
+                    public void onBoomButtonClick(int index) {
+                        VKSdk.logout();
+                        startActivity(new Intent(GetAll.this, MainActivity.class));
+                        finish();
+                    }
+                })
+                .shadowEffect(true)
+                .normalColor(getResources().getColor(R.color.menu_item3))
+                .pieceColor(getResources().getColor(R.color.menu_item3piece));
+        bmb.addBuilder(builder3);
+
+
 
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest postRequest = new StringRequest(Request.Method.POST, link,
@@ -194,13 +389,6 @@ public class GetAll extends AppCompatActivity implements RewardedVideoAdListener
 
             }
         });
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadRewardedVideoAd();
-            }
-        });
-
         seekBar.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
             @Override
             public void onProgressChanged(DiscreteSeekBar seekBar, int progress, boolean fromUser) {
@@ -222,7 +410,7 @@ public class GetAll extends AppCompatActivity implements RewardedVideoAdListener
         btnGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btnGo.setProgress(1);
+               // btnGo.setProgress(seekbar);
 
                 RequestQueue queue = Volley.newRequestQueue(btnGo.getContext());
                 StringRequest postRequest = new StringRequest(Request.Method.POST, link,
@@ -277,50 +465,30 @@ public class GetAll extends AppCompatActivity implements RewardedVideoAdListener
                     }
                 };
                 queue.add(postRequest);
+                btnGo.setClickable(false);
+                btnGo.setIndeterminateProgressMode(true); // turn on indeterminate progress
+                btnGo.setProgress(50);
+                 // set progress > 0 & < 100 to display indeterminate progress
+                //
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 VKRequest request = VKApi.groups().search(VKParameters.from(VKApiConst.Q, "бот", VKApiConst.COUNT, value, VKApiConst.OFFSET, messes));
                 request.executeWithListener(new VKRequest.VKRequestListener() {
+
                     @Override
                     public void onComplete(VKResponse response) {
-                    super.onComplete(response);
-
-
-                        ArrayList<String> messes=new ArrayList<String>();
-                        Log.d("xyi", response.responseString);
-                        JSONObject object = response.json;
-                        try {
-                            object = object.getJSONObject("response");
-                            JSONArray array = object.getJSONArray("items");
-                            Log.d("xyi", String.valueOf(array.length()));
-                            for(int i = 0; i<value; i++){
-                                JSONObject obj = array.getJSONObject(i);
-                                VKRequest request = new VKRequest("messages.send", VKParameters.from(VKApiConst.USER_ID,
-                                        "-"+obj.getString("id"), VKApiConst.MESSAGE, "Привет"));
-                                request.executeWithListener(new VKRequest.VKRequestListener() {
-                                    @Override
-                                    public void onComplete(VKResponse response) {
-                                        super.onComplete(response);
-                                        Log.d("ANSWER", "УСПЕХ");
-                                        btnGo.setProgress(0);
-                                    }
-
-                                    @Override
-                                    public void onProgress(VKRequest.VKProgressType progressType, long bytesLoaded, long bytesTotal) {
-                                        super.onProgress(progressType, bytesLoaded, bytesTotal);
-                                        btnGo.setProgress(btnGo.getProgress()+1);
-                                    }
-                                });
-                                try {
-                                    Thread.sleep(2000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        super.onComplete(response);
+                        MyAsyncTask mt = new MyAsyncTask();
+                        mt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,response);
                     }
                 });
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //dialog.show();
+//                MyAsyncTask mt = new MyAsyncTask();
+//                mt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,response);
+                //btnGo.setProgress(seekbar);
+                //btnGo.setIndeterminateProgressMode(false);
+
             }
         });
     }
@@ -329,12 +497,34 @@ public class GetAll extends AppCompatActivity implements RewardedVideoAdListener
                 .addTestDevice("4CC1636AE73A6B5D941CFBC28769E6E9")
                 .build());
         mAd.setRewardedVideoAdListener(this);
+        dialog.show();
     }
 
+    private class MyPagerAdapter extends FragmentPagerAdapter {
+
+        public MyPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int pos) {
+            switch(pos) {
+
+                case 0: return FirstPage.newInstance(1);
+                case 1: return SecondPage.newInstance(2);
+                default: return FirstPage.newInstance(1);
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+    }
 
     @Override
     public void onRewardedVideoAdLoaded() {
-        mAd.show();
+        dialog.dismiss();mAd.show();
     }
 
     @Override
@@ -384,7 +574,6 @@ public class GetAll extends AppCompatActivity implements RewardedVideoAdListener
                         }catch (JSONException error){
 
                         }
-
                         Log.d("Response", response);
                     }
                 },
@@ -420,8 +609,88 @@ public class GetAll extends AppCompatActivity implements RewardedVideoAdListener
 
     }
 
+
     int getMyId() {
         final VKAccessToken vkAccessToken = VKAccessToken.currentToken();
         return vkAccessToken != null ? Integer.parseInt(vkAccessToken.userId) : 0;
+    }
+
+    private class MyAsyncTask extends AsyncTask<VKResponse, Integer, Integer> {
+
+        @Override
+        protected void onProgressUpdate(Integer... progress) {
+            // [... Обновите индикатор хода выполнения, уведомления или
+            // элемент пользовательского интерфейса ...]
+        }
+
+
+        @Override
+        protected Integer doInBackground(VKResponse... parameter) {
+            int myProgress = 0;
+            // [... Выполните задачу в фоновом режиме, обновите переменную myProgress...]
+            Log.d("xyi", parameter[0].responseString);
+            JSONObject object = parameter[0].json;
+            try {
+                object = object.getJSONObject("response");
+                JSONArray array = object.getJSONArray("items");
+                Log.d("xyi", String.valueOf(array.length()));
+                for(int i = 0; i<value; i++){
+                    //btnGo.setProgress(btnGo.getProgress()+100/value);
+                    JSONObject obj = array.getJSONObject(i);
+                    VKRequest request2 = new VKRequest("messages.send", VKParameters.from(VKApiConst.USER_ID,
+                            "-"+obj.getString("id"), VKApiConst.MESSAGE, "Привет"));
+                    request2.executeWithListener(new VKRequest.VKRequestListener() {
+                        @Override
+                        public void onComplete(VKResponse response) {
+                            super.onComplete(response);
+                            Log.d("ANSWER", "УСПЕХ");
+                        }
+
+                        @Override
+                        public void onProgress(VKRequest.VKProgressType progressType, long bytesLoaded, long bytesTotal) {
+                            super.onProgress(progressType, bytesLoaded, bytesTotal);
+                        }
+                    });
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            // [... Продолжение выполнения фоновой задачи ...]
+            // Верните значение, ранее переданное в метод onPostExecute
+            return 1;
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
+            btnGo.setProgress(0);
+            btnGo.setClickable(true);
+            //  dialog.dismiss();
+        }
+    }
+
+    private String getLocale(){
+        String locale = sharedPreferences.getString("lang","");
+        return locale;
+    }
+
+    private void setLocale(String lang){
+        mLocale = new Locale(lang);
+        Locale.setDefault(mLocale);
+        Configuration configuration = new Configuration();
+        configuration.locale = mLocale;
+        getBaseContext().getResources().updateConfiguration(configuration, null);
+        SharedPreferences.Editor ed = sharedPreferences.edit();
+        if(Objects.equals(lang, "en")) {
+            ed.putString("lang", "en");
+        }else if (Objects.equals(lang, "ru")){
+            ed.putString("lang", "ru");
+        }
+        ed.commit();
     }
 }

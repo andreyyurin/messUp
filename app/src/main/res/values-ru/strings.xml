@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MessUp</string>
+    <string name="btn_text">Накрутить</string>
+    <string name="instr1_page1">Настройка</string>
+    <string name="instr1_page2">1 Монетка = 1 Просмотр рекламы</string>
+    <string name="instr2_page1">Выбери нужное количество</string>
+    <string name="instr2_page2">Зайди в меню</string>
+    <string name="instr3_page1">Нажми на кнопку</string>
+    <string name="instr3_page2">Нажми на кнопку</string>
+    <string name="banner_ad_unit_id">ca-app-pub-8154277548860310/5468149724</string>
+    <string name="about">О приложении</string>
+    <string name="info">Накрутка сообщений во ВКонтакте</string>
+    <string name="version">Версия:</string>
+    <string name="url_inst">https://www.instagram.com/lazyteenscorp/</string>
+    <string name="url_vk">https://vk.com/ltc_omsk</string>
+    <string name="contacts">Наши контакты</string>
+</resources>

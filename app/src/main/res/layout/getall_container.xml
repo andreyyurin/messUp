@@ -35,26 +35,65 @@
             android:layout_height="50dp" />
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/layout_button"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_below="@+id/layout_text">
+        android:orientation="horizontal"
+        android:layout_below="@+id/layout_text"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
-        <com.dd.processbutton.iml.ActionProcessButton
-            android:id="@+id/btnGo"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Накрутить"
-            android:textSize="15dp"
+            android:layout_weight="1">
 
-            custom:pb_colorComplete="@color/green_complete"
-            custom:pb_colorError="@color/red_error"
-            custom:pb_colorNormal="@color/toolbar_color"
-            custom:pb_colorPressed="@color/blue_pressed"
-            custom:pb_colorProgress="@color/purple_progress"
-            custom:pb_textComplete="Success"
-            custom:pb_textError="Error"
-            custom:pb_textProgress="Loading" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <com.dd.CircularProgressButton
+                android:id="@+id/btnGo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="15dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                app:cpb_selectorIdle="@drawable/button_style"
+                app:cpb_colorIndicator="@color/toolbar_color"
+                app:cpb_cornerRadius="56dp"
+                android:textColor="@color/vk_white"
+                app:cpb_textIdle="@string/btn_text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent">
+
+        </LinearLayout>
+
+
+
+
     </LinearLayout>
+    <android.support.v4.view.ViewPager
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/indicator"
+        android:layout_height="wrap_content"
+        android:id="@+id/pager">
+    </android.support.v4.view.ViewPager>
+    <me.relex.circleindicator.CircleIndicator
+        app:ci_width="6dp"
+        app:ci_height="6dp"
+        android:layout_marginTop="20dp"
+        app:ci_gravity="center"
+        app:ci_drawable="@drawable/btn_indicator"
+        app:ci_drawable_unselected="@drawable/btn_indicator"
+        android:id="@+id/indicator"
+        android:layout_below="@+id/layout_button"
+        android:layout_width="match_parent"
+        android:layout_height="12dp"/>
 </RelativeLayout>

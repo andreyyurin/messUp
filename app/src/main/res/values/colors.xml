@@ -3,5 +3,15 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="toolbar_color">#84b2f9</color>
+    <color name="toolbar_color">#7E57C2</color>
+
+    <color name="menu_item1">#E65100</color>
+    <color name="menu_item2">#388E3C</color>
+    <color name="menu_item3">#1565C0</color>
+    <color name="menu_item4">#c01520</color>
+
+    <color name="menu_item1piece">#FFCC80</color>
+    <color name="menu_item2piece">#81C784</color>
+    <color name="menu_item3piece">#90CAF9</color>
+    <color name="menu_item4piece">#f99092</color>
 </resources>

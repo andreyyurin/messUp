@@ -18,6 +18,7 @@
         app:civ_border_color="#FF000000"
         />
     <LinearLayout
+        android:padding="2dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -26,7 +27,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1">
             <TextView
-                android:textColor="@color/vk_black"
+                android:textColor="@color/vk_white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20dp"
@@ -51,7 +52,7 @@
                     android:src="@drawable/coins" />
                 <TextView
                     android:id="@+id/textCoins"
-                    android:textColor="@color/vk_black"
+                    android:textColor="@color/vk_white"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="15dp"

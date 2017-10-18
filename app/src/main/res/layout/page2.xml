@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="22dp"
         android:text="@string/instr1_page2"
         android:textSize="20dp"
         android:textColor="@color/vk_black"
@@ -13,7 +13,7 @@
     <TextView
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="17dp"
         android:text="@string/instr2_page2"
         android:textSize="15dp"
         android:textColor="@color/vk_black"
@@ -29,7 +29,7 @@
     <TextView
         android:layout_marginTop="30dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="17dp"
         android:text="@string/instr3_page2"
         android:textSize="15dp"
         android:textColor="@color/vk_black"

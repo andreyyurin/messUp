@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="32dp"
+        android:layout_height="40dp"
         android:text="@string/instr1_page1"
         android:textSize="30dp"
         android:textColor="@color/vk_black"
